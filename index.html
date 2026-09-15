@@ -14,7 +14,7 @@
         body {
             font-family: 'Arial', sans-serif;
             overflow: hidden;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 50%, #90EE90 100%);
         }
 
         #gameContainer {
@@ -62,49 +62,203 @@
             position: relative;
             overflow: hidden;
             display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         #minesContainer {
             flex: 1;
             display: flex;
-            gap: 20px;
+            gap: 40px;
             padding: 20px;
             overflow-x: auto;
-            background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 100%);
-            align-items: flex-start;
+            align-items: center;
+            justify-content: flex-start;
+            background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 50%, #90EE90 100%);
         }
 
-        .mineSection {
+        .mineShaft {
             flex-shrink: 0;
-            width: 380px;
-            background: rgba(255, 255, 255, 0.98);
-            border-radius: 12px;
-            padding: 15px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            width: 160px;
+            height: 600px;
+            position: relative;
             display: flex;
             flex-direction: column;
+        }
+
+        /* Mine Shaft Structure */
+        .shaftContainer {
+            width: 100%;
+            height: 100%;
+            border: 4px solid #4a3728;
+            border-radius: 20px 20px 0 0;
+            background: linear-gradient(to bottom, #8B7355 0%, #654321 50%, #3E2723 100%);
             position: relative;
-            border: 2px solid #333;
+            overflow: hidden;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5), 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .shaftWalls {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+
+        .shaftWall {
+            position: absolute;
+            background: repeating-linear-gradient(
+                90deg,
+                #5a4a3a 0px,
+                #5a4a3a 2px,
+                #6a5a4a 2px,
+                #6a5a4a 4px
+            );
+            opacity: 0.3;
+        }
+
+        .wallLeft {
+            left: 0;
+            top: 0;
+            width: 8px;
+            height: 100%;
+        }
+
+        .wallRight {
+            right: 0;
+            top: 0;
+            width: 8px;
+            height: 100%;
+        }
+
+        .shaftContent {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .depthMarkers {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+            pointer-events: none;
+        }
+
+        .depthMarker {
+            position: absolute;
+            left: 5px;
+            width: 100%;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.2);
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.4);
+            padding-left: 3px;
+        }
+
+        .oreLayer {
+            flex: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+        }
+
+        .oreLayer:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .oreMine {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            border: 3px solid rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+
+        .oreMine:active {
+            transform: scale(0.95);
+        }
+
+        .coal {
+            background: linear-gradient(135deg, #3a3a3a 0%, #5a5a5a 100%);
+        }
+
+        .gold {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+        }
+
+        .diamond {
+            background: linear-gradient(135deg, #00CED1 0%, #00BFFF 100%);
+        }
+
+        .elevatorShaft {
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 100px;
+            height: 100%;
+            background: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.1) 100%);
+            border-left: 2px dashed #666;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .elevatorCar {
+            width: 70px;
+            height: 60px;
+            background: linear-gradient(135deg, #FF6B6B 0%, #FFB6B6 100%);
+            border: 3px solid #333;
+            border-radius: 8px;
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s;
+            top: 10px;
+        }
+
+        .elevatorCar:hover {
+            transform: scale(1.05);
         }
 
         .mineHeader {
+            position: absolute;
+            top: -50px;
+            left: 0;
+            width: 100%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 2px solid #FFD700;
+            z-index: 100;
         }
 
         .mineTitle {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
             color: #333;
-        }
-
-        .mineDepth {
-            color: #666;
-            font-size: 13px;
+            background: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
 
         .settingsBtn {
@@ -120,6 +274,7 @@
             align-items: center;
             justify-content: center;
             transition: 0.3s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
 
         .settingsBtn:hover {
@@ -127,62 +282,58 @@
             transform: scale(1.1);
         }
 
-        .mineCanvas {
-            width: 100%;
-            height: 350px;
-            background: linear-gradient(to bottom, #8B7355 0%, #654321 50%, #3E2723 100%);
-            border: 3px solid #333;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            position: relative;
-        }
-
         .mineInfo {
+            position: absolute;
+            bottom: -120px;
+            left: 0;
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 8px;
-            margin-bottom: 10px;
-            padding: 8px;
-            background: #f5f5f5;
-            border-radius: 5px;
+            width: 100%;
         }
 
         .infoBox {
-            padding: 6px;
+            padding: 8px;
             background: white;
-            border-radius: 3px;
+            border-radius: 5px;
             border-left: 3px solid #FFD700;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
 
         .infoLabel {
             color: #666;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
         }
 
         .infoValue {
             color: #333;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: bold;
         }
 
         .buttonGroup {
+            position: absolute;
+            bottom: -160px;
+            left: 0;
             display: flex;
-            gap: 8px;
+            flex-direction: column;
+            gap: 6px;
+            width: 100%;
         }
 
         .btnSmall {
-            flex: 1;
-            padding: 10px;
+            width: 100%;
+            padding: 8px;
             background: #4CAF50;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
             transition: 0.3s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
 
         .btnSmall:hover:not(:disabled) {
@@ -199,6 +350,43 @@
             cursor: not-allowed;
         }
 
+        .addMineSection {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 180px;
+            flex-shrink: 0;
+            height: 600px;
+        }
+
+        #addMineBtn {
+            padding: 25px 15px;
+            background: linear-gradient(135deg, #FF9800 0%, #FFB74D 100%);
+            color: white;
+            border: 3px solid #333;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        #addMineBtn:hover:not(:disabled) {
+            background: linear-gradient(135deg, #e68900 0%, #FF9800 100%);
+            transform: scale(1.08);
+            box-shadow: 0 7px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        #addMineBtn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            border-color: #999;
+        }
+
+        /* Modal Styles */
         .modal {
             display: none;
             position: fixed;
@@ -317,12 +505,13 @@
         .npc {
             position: absolute;
             text-align: center;
+            z-index: 10;
         }
 
         .npcSprite {
             width: 35px;
             height: 45px;
-            background: linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%);
+            background: linear-gradient(135deg, #4CAF50 0%, #81C784 100%);
             border-radius: 8px;
             margin: 0 auto;
             display: flex;
@@ -345,57 +534,6 @@
             border: 1px solid #333;
         }
 
-        .addMineSection {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 380px;
-            flex-shrink: 0;
-        }
-
-        #addMineBtn {
-            padding: 20px 30px;
-            background: linear-gradient(135deg, #FF9800 0%, #FFB74D 100%);
-            color: white;
-            border: 3px solid #333;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 18px;
-            font-weight: bold;
-            transition: 0.3s;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        #addMineBtn:hover:not(:disabled) {
-            background: linear-gradient(135deg, #e68900 0%, #FF9800 100%);
-            transform: scale(1.08);
-            box-shadow: 0 7px 20px rgba(0, 0, 0, 0.4);
-        }
-
-        #addMineBtn:disabled {
-            background: #cccccc;
-            cursor: not-allowed;
-            border-color: #999;
-        }
-
-        .ore-text {
-            font-weight: bold;
-            font-size: 14px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-        }
-
-        .coal-ore {
-            color: #4a4a4a;
-        }
-
-        .gold-ore {
-            color: #FFD700;
-        }
-
-        .diamond-ore {
-            color: #00CED1;
-        }
-
         @keyframes floatUp {
             0% {
                 transform: translateY(0) opacity(1);
@@ -410,66 +548,18 @@
             animation: floatUp 1.2s ease-out;
             pointer-events: none;
             font-family: Arial, sans-serif;
-        }
-
-        .progressBar {
-            width: 100%;
-            height: 8px;
-            background: #ddd;
-            border-radius: 4px;
-            overflow: hidden;
-            margin-top: 4px;
-        }
-
-        .progressFill {
-            height: 100%;
-            background: linear-gradient(90deg, #4CAF50 0%, #45a049 100%);
-            transition: width 0.3s;
-        }
-
-        .costWarning {
-            color: #d32f2f;
             font-weight: bold;
-            margin-top: 5px;
+            font-size: 18px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            z-index: 100;
         }
 
-        .elevatorSprite {
-            width: 40px;
-            height: 50px;
-            background: linear-gradient(135deg, #FF6B6B 0%, #FFB6B6 100%);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            border: 2px solid #333;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
-        }
-
-        .managerSprite {
-            width: 40px;
-            height: 50px;
-            background: linear-gradient(135deg, #4CAF50 0%, #81C784 100%);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            border: 2px solid #333;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
-        }
-
-        .minerSprite {
-            width: 40px;
-            height: 50px;
-            background: linear-gradient(135deg, #2196F3 0%, #64B5F6 100%);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            border: 2px solid #333;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+        h3 {
+            margin-top: 20px;
+            margin-bottom: 10px;
+            color: #333;
+            border-bottom: 2px solid #2196F3;
+            padding-bottom: 5px;
         }
     </style>
 </head>
@@ -479,7 +569,7 @@
             <div class="topBar-section">
                 <div class="stat">
                     <span class="stat-label">💰 Money:</span>
-                    <span class="stat-value" id="totalMoney">$0</span>
+                    <span class="stat-value" id="totalMoney">$2000</span>
                 </div>
                 <div class="stat">
                     <span class="stat-label">⛏️ Coal:</span>
@@ -505,7 +595,7 @@
         <div id="gameArea">
             <div id="minesContainer">
                 <div class="addMineSection">
-                    <button id="addMineBtn">+ ADD MINE ($500)</button>
+                    <button id="addMineBtn">+ ADD MINE<br>($500)</button>
                 </div>
             </div>
         </div>
@@ -529,6 +619,9 @@
         const COAL_PRICE = 50;
         const GOLD_PRICE = 200;
         const DIAMOND_PRICE = 500;
+        const MANAGER_COST = 300;
+        const ELEVATOR_COST = 400;
+        const DEPTH_UPGRADE_COST = 600;
 
         // ============ GAME STATE ============
         let gameState = {
@@ -539,9 +632,8 @@
 
         // ============ ORE CLASSES ============
         class Ore {
-            constructor(type, depth) {
+            constructor(type) {
                 this.type = type;
-                this.depth = depth;
                 this.name = type.charAt(0).toUpperCase() + type.slice(1);
             }
 
@@ -582,8 +674,8 @@
                 this.inventory = { coal: 0, gold: 0, diamond: 0 };
                 this.managers = [];
                 this.elevator = null;
-                this.canvas = null;
-                this.ctx = null;
+                this.element = null;
+                this.shaftContent = null;
                 this.npcs = [];
                 this.generateOres();
                 this.spawnInitialNPCs();
@@ -604,7 +696,7 @@
                 }
 
                 // Randomize
-                this.currentOres = oreTypes.map(type => new Ore(type, Math.random())).sort(() => Math.random() - 0.5);
+                this.currentOres = oreTypes.map(type => new Ore(type)).sort(() => Math.random() - 0.5);
             }
 
             spawnInitialNPCs() {
@@ -614,8 +706,6 @@
                     id: Math.random(),
                     type: 'miner',
                     name: 'Miner 1',
-                    x: Math.random() * 200 + 50,
-                    y: Math.random() * 200 + 50,
                     miningSpeed: 1
                 });
             }
@@ -635,8 +725,6 @@
                     id: Math.random(),
                     type: 'manager',
                     name: `Manager ${this.managers.length + 1}`,
-                    x: Math.random() * 200 + 50,
-                    y: Math.random() * 250 + 50,
                     automationLevel: 1
                 });
             }
@@ -648,9 +736,7 @@
                         type: 'elevator',
                         name: 'Elevator',
                         capacity: 10,
-                        level: 1,
-                        x: 300,
-                        y: 50
+                        level: 1
                     };
                 } else {
                     this.elevator.capacity += 5;
@@ -672,95 +758,35 @@
                 return earnings;
             }
 
-            drawMineCanvas() {
-                if (!this.canvas || !this.ctx) return;
-
-                const width = this.canvas.width;
-                const height = this.canvas.height;
-
-                // Clear canvas
-                this.ctx.fillStyle = `#654321`;
-                this.ctx.fillRect(0, 0, width, height);
-
-                // Draw ore deposits
-                this.ctx.font = '20px Arial';
-                const displayOres = this.currentOres.slice(0, 8);
-                displayOres.forEach((ore, index) => {
-                    const x = (index % 4) * (width / 4) + 30;
-                    const y = Math.floor(index / 4) * (height / 2) + 50;
-                    
-                    this.ctx.fillStyle = ore.getColor();
-                    this.ctx.fillRect(x, y, 35, 35);
-                    this.ctx.strokeStyle = '#333';
-                    this.ctx.lineWidth = 2;
-                    this.ctx.strokeRect(x, y, 35, 35);
-                    
-                    this.ctx.fillStyle = '#fff';
-                    this.ctx.textAlign = 'center';
-                    this.ctx.textBaseline = 'middle';
-                    this.ctx.fillText(ore.getEmoji(), x + 17, y + 17);
-                });
-
-                // Draw NPCs
-                this.npcs.forEach(npc => {
-                    this.drawNPC(npc);
-                });
-
-                this.managers.forEach(manager => {
-                    this.drawNPC(manager);
-                });
-
-                if (this.elevator) {
-                    this.drawNPC(this.elevator);
-                }
-
-                // Draw ores remaining count
-                this.ctx.fillStyle = '#FFD700';
-                this.ctx.font = 'bold 14px Arial';
-                this.ctx.textAlign = 'left';
-                this.ctx.textBaseline = 'top';
-                this.ctx.fillText(`Ores Available: ${this.currentOres.length}`, 10, 10);
-            }
-
-            drawNPC(npc) {
-                const x = npc.x;
-                const y = npc.y;
-                
-                if (npc.type === 'miner') {
-                    this.ctx.fillStyle = '#2196F3';
-                    this.ctx.fillRect(x, y, 25, 30);
-                    this.ctx.fillStyle = '#fff';
-                    this.ctx.font = 'bold 16px Arial';
-                    this.ctx.textAlign = 'center';
-                    this.ctx.textBaseline = 'middle';
-                    this.ctx.fillText('⛏️', x + 12, y + 15);
-                } else if (npc.type === 'manager') {
-                    this.ctx.fillStyle = '#4CAF50';
-                    this.ctx.fillRect(x, y, 25, 30);
-                    this.ctx.fillStyle = '#fff';
-                    this.ctx.font = 'bold 16px Arial';
-                    this.ctx.textAlign = 'center';
-                    this.ctx.textBaseline = 'middle';
-                    this.ctx.fillText('👔', x + 12, y + 15);
-                } else if (npc.type === 'elevator') {
-                    this.ctx.fillStyle = '#FF6B6B';
-                    this.ctx.fillRect(x, y, 30, 40);
-                    this.ctx.strokeStyle = '#333';
-                    this.ctx.lineWidth = 2;
-                    this.ctx.strokeRect(x, y, 30, 40);
-                    this.ctx.fillStyle = '#fff';
-                    this.ctx.font = 'bold 18px Arial';
-                    this.ctx.textAlign = 'center';
-                    this.ctx.textBaseline = 'middle';
-                    this.ctx.fillText('🛗', x + 15, y + 20);
-                }
-            }
-
             autoMine() {
                 if (this.managers.length > 0) {
                     const mineAmount = this.managers.length;
                     this.mineOre(mineAmount);
                 }
+            }
+
+            render() {
+                if (!this.element || !this.shaftContent) return;
+
+                // Clear old ores
+                this.shaftContent.querySelectorAll('.oreLayer').forEach(el => el.remove());
+
+                // Render ore layers
+                this.currentOres.forEach((ore, index) => {
+                    const layer = document.createElement('div');
+                    layer.className = 'oreLayer';
+                    
+                    const oreElement = document.createElement('div');
+                    oreElement.className = `oreMine ${ore.type}`;
+                    oreElement.textContent = ore.getEmoji();
+                    oreElement.onclick = (e) => {
+                        e.stopPropagation();
+                        mineMiningClick(this.id);
+                    };
+                    
+                    layer.appendChild(oreElement);
+                    this.shaftContent.appendChild(layer);
+                });
             }
         }
 
@@ -783,47 +809,69 @@
         function renderMines() {
             const container = document.getElementById('minesContainer');
             
-            // Keep the add mine button
+            // Keep the add mine button at start
             const addMineSection = container.querySelector('.addMineSection');
-            container.innerHTML = '';
+            
+            // Remove all mine shafts but keep add button
+            container.querySelectorAll('.mineShaft').forEach(el => el.remove());
             
             // Render each mine
             gameState.mines.forEach(mine => {
                 const mineSection = createMineSection(mine);
-                container.appendChild(mineSection);
+                container.insertBefore(mineSection, addMineSection);
+                mine.render();
             });
-            
-            // Add the add mine button back
-            container.appendChild(addMineSection || createAddMineSection());
         }
 
         function createMineSection(mine) {
-            const section = document.createElement('div');
-            section.className = 'mineSection';
-            section.id = `mine-${mine.id}`;
+            const shaft = document.createElement('div');
+            shaft.className = 'mineShaft';
+            shaft.id = `mine-${mine.id}`;
+            shaft.style.marginTop = '60px';
+            shaft.style.marginBottom = '180px';
 
+            // Header
             const header = document.createElement('div');
             header.className = 'mineHeader';
             header.innerHTML = `
-                <div>
-                    <div class="mineTitle">Mine #${mine.id}</div>
-                    <div class="mineDepth">Depth: ${mine.depth}</div>
-                </div>
+                <div class="mineTitle">Mine #${mine.id}</div>
                 <button class="settingsBtn" onclick="openMineSettings(${mine.id})">⚙️</button>
             `;
-            section.appendChild(header);
+            shaft.appendChild(header);
 
-            const canvas = document.createElement('canvas');
-            canvas.className = 'mineCanvas';
-            canvas.width = 340;
-            canvas.height = 350;
-            canvas.onclick = () => mineMiningClick(mine.id);
-            section.appendChild(canvas);
+            // Shaft container
+            const shaftContainer = document.createElement('div');
+            shaftContainer.className = 'shaftContainer';
 
-            mine.canvas = canvas;
-            mine.ctx = canvas.getContext('2d');
-            mine.drawMineCanvas();
+            const shaftWalls = document.createElement('div');
+            shaftWalls.className = 'shaftWalls';
+            shaftWalls.innerHTML = '<div class="shaftWall wallLeft"></div><div class="shaftWall wallRight"></div>';
+            shaftContainer.appendChild(shaftWalls);
 
+            const shaftContent = document.createElement('div');
+            shaftContent.className = 'shaftContent';
+            shaftContainer.appendChild(shaftContent);
+
+            // Elevator shaft on the right
+            const elevatorShaft = document.createElement('div');
+            elevatorShaft.className = 'elevatorShaft';
+            
+            if (mine.elevator) {
+                const elevatorCar = document.createElement('div');
+                elevatorCar.className = 'elevatorCar';
+                elevatorCar.textContent = '🛗';
+                elevatorCar.onclick = (e) => {
+                    e.stopPropagation();
+                    sellMineOres(mine.id);
+                };
+                elevatorCar.title = 'Click to sell ores via elevator';
+                elevatorShaft.appendChild(elevatorCar);
+            }
+
+            shaftContainer.appendChild(elevatorShaft);
+            shaft.appendChild(shaftContainer);
+
+            // Info boxes
             const info = document.createElement('div');
             info.className = 'mineInfo';
             info.innerHTML = `
@@ -844,24 +892,21 @@
                     <div class="infoValue">${mine.getTotalOres()}</div>
                 </div>
             `;
-            section.appendChild(info);
+            shaft.appendChild(info);
 
+            // Buttons
             const buttons = document.createElement('div');
             buttons.className = 'buttonGroup';
             buttons.innerHTML = `
                 <button class="btnSmall" onclick="quickMineSingle(${mine.id})">⛏️ Mine (10)</button>
                 <button class="btnSmall" onclick="sellMineOres(${mine.id})">💰 Sell All</button>
             `;
-            section.appendChild(buttons);
+            shaft.appendChild(buttons);
 
-            return section;
-        }
+            mine.element = shaft;
+            mine.shaftContent = shaftContent;
 
-        function createAddMineSection() {
-            const section = document.createElement('div');
-            section.className = 'addMineSection';
-            section.innerHTML = '<button id="addMineBtn" onclick="addMine()">+ ADD MINE ($500)</button>';
-            return section;
+            return shaft;
         }
 
         function addMine() {
@@ -884,8 +929,9 @@
                     const ore = mined[0];
                     showOreParticle(ore, mineId);
                 }
-                mine.drawMineCanvas();
+                mine.render();
                 updateUI();
+                renderMines();
             }
         }
 
@@ -898,8 +944,9 @@
                         showOreParticle(mined[0], mineId);
                     }
                 }
-                mine.drawMineCanvas();
+                mine.render();
                 updateUI();
+                renderMines();
             }
         }
 
@@ -911,28 +958,28 @@
                 
                 if (earnings > 0) {
                     alert(`Sold all ores for $${earnings}!`);
+                } else {
+                    alert('No ores to sell!');
                 }
                 
-                mine.drawMineCanvas();
+                mine.render();
                 updateUI();
                 renderMines();
             }
         }
 
         function showOreParticle(ore, mineId) {
-            const mine = gameState.mines.find(m => m.id === mineId);
-            if (!mine || !mine.canvas) return;
-
             const mineElement = document.getElementById(`mine-${mineId}`);
             if (!mineElement) return;
 
             const particle = document.createElement('div');
-            particle.className = 'ore-particle ore-text ' + ore.type + '-ore';
+            particle.className = 'ore-particle';
             particle.textContent = ore.getEmoji() + ' +1';
-            particle.style.left = Math.random() * 300 + 50 + 'px';
+            particle.style.left = Math.random() * 100 + 30 + 'px';
             particle.style.top = Math.random() * 300 + 50 + 'px';
+            particle.style.color = ore.getColor();
 
-            mine.canvas.parentElement.appendChild(particle);
+            mineElement.appendChild(particle);
 
             setTimeout(() => particle.remove(), 1200);
         }
@@ -950,11 +997,7 @@
 
             // Miners Section
             const minersSection = document.createElement('div');
-            minersSection.innerHTML = `
-                <h3 style="margin-top: 20px; margin-bottom: 10px; color: #333; border-bottom: 2px solid #2196F3; padding-bottom: 5px;">
-                    ⛏️ Miners (${mine.npcs.length})
-                </h3>
-            `;
+            minersSection.innerHTML = `<h3>⛏️ Miners (${mine.npcs.length})</h3>`;
             mine.npcs.forEach(miner => {
                 minersSection.innerHTML += `
                     <div class="upgradeItem">
@@ -968,11 +1011,7 @@
 
             // Managers Section
             const managersSection = document.createElement('div');
-            managersSection.innerHTML = `
-                <h3 style="margin-top: 20px; margin-bottom: 10px; color: #333; border-bottom: 2px solid #4CAF50; padding-bottom: 5px;">
-                    👔 Managers (${mine.managers.length})
-                </h3>
-            `;
+            managersSection.innerHTML = `<h3>👔 Managers (${mine.managers.length})</h3>`;
             mine.managers.forEach(manager => {
                 managersSection.innerHTML += `
                     <div class="upgradeItem">
@@ -1002,11 +1041,7 @@
 
             // Elevator Section
             const elevatorSection = document.createElement('div');
-            elevatorSection.innerHTML = `
-                <h3 style="margin-top: 20px; margin-bottom: 10px; color: #333; border-bottom: 2px solid #FF6B6B; padding-bottom: 5px;">
-                    🛗 Elevator
-                </h3>
-            `;
+            elevatorSection.innerHTML = `<h3>🛗 Elevator</h3>`;
 
             if (mine.elevator) {
                 elevatorSection.innerHTML += `
@@ -1034,6 +1069,7 @@
                     mine.upgradeElevator();
                     updateUI();
                     openMineSettings(mineId);
+                    renderMines();
                 } else {
                     alert('Not enough money!');
                 }
@@ -1043,10 +1079,7 @@
 
             // Depth Upgrade Section
             const depthSection = document.createElement('div');
-            depthSection.innerHTML = `
-                <h3 style="margin-top: 20px; margin-bottom: 10px; color: #333; border-bottom: 2px solid #FFD700; padding-bottom: 5px;">
-                    🔨 Mine Depth
-                </h3>
+            depthSection.innerHTML = `<h3>🔨 Mine Depth</h3>
                 <div class="upgradeItem">
                     <div class="upgradeTitle">Current Depth: ${mine.depth}</div>
                     <div class="upgradeDesc">Dive deeper to find better ores!</div>
@@ -1063,7 +1096,7 @@
                     gameState.money -= 600;
                     mine.depth += 5;
                     mine.generateOres();
-                    mine.drawMineCanvas();
+                    mine.render();
                     updateUI();
                     openMineSettings(mineId);
                 } else {
@@ -1097,16 +1130,8 @@
         }, 2000);
 
         // ============ INITIAL SETUP ============
+        document.getElementById('addMineBtn').onclick = addMine;
         updateUI();
-        renderMines();
-
-        // Add initial mine button listener
-        document.addEventListener('DOMContentLoaded', () => {
-            const addBtn = document.getElementById('addMineBtn');
-            if (addBtn) {
-                addBtn.onclick = addMine;
-            }
-        });
     </script>
 </body>
 </html>
