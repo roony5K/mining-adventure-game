@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mining Adventure Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        #gameContainer {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #topBar {
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 18px;
+            border-bottom: 3px solid #FFD700;
+        }
+
+        .topBar-section {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat-label {
+            color: #FFD700;
+            font-weight: bold;
+        }
+
+        .stat-value {
+            color: #fff;
+            font-size: 20px;
+        }
+
+        #gameArea {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+        }
+
+        #minesContainer {
+            flex: 1;
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+            overflow-x: auto;
+            background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 100%);
+            align-items: flex-start;
+        }
+
+        .mineSection {
+            flex-shrink: 0;
+            width: 380px;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            border: 2px solid #333;
+        }
+
+        .mineHeader {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #FFD700;
+        }
+
+        .mineTitle {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .mineDepth {
+            color: #666;
+            font-size: 13px;
+        }
+
+        .settingsBtn {
+            width: 32px;
+            height: 32px;
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
+
+        .settingsBtn:hover {
+            background: #0b7dda;
+            transform: scale(1.1);
+        }
+
+        .mineCanvas {
+            width: 100%;
+            height: 350px;
+            background: linear-gradient(to bottom, #8B7355 0%, #654321 50%, #3E2723 100%);
+            border: 3px solid #333;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .mineInfo {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 10px;
+            padding: 8px;
+            background: #f5f5f5;
+            border-radius: 5px;
+        }
+
+        .infoBox {
+            padding: 6px;
+            background: white;
+            border-radius: 3px;
+            border-left: 3px solid #FFD700;
+        }
+
+        .infoLabel {
+            color: #666;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .infoValue {
+            color: #333;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .buttonGroup {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btnSmall {
+            flex: 1;
+            padding: 10px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .btnSmall:hover:not(:disabled) {
+            background: #45a049;
+            transform: scale(1.05);
+        }
+
+        .btnSmall:active:not(:disabled) {
+            transform: scale(0.95);
+        }
+
+        .btnSmall:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modalContent {
+            background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
+            border: 3px solid #333;
+        }
+
+        .modalHeader {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #FFD700;
+            padding-bottom: 10px;
+        }
+
+        .closeBtn {
+            background: none;
+            border: none;
+            font-size: 32px;
+            cursor: pointer;
+            color: #999;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .closeBtn:hover {
+            color: #d32f2f;
+        }
+
+        .upgradeItem {
+            padding: 15px;
+            background: #f9f9f9;
+            border-left: 4px solid #4CAF50;
+            margin-bottom: 12px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .upgradeTitle {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 6px;
+            color: #333;
+        }
+
+        .upgradeDesc {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .upgradeCost {
+            font-size: 13px;
+            color: #FFD700;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .upgradeLevel {
+            font-size: 12px;
+            color: #2196F3;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .btnUpgrade {
+            width: 100%;
+            padding: 10px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .btnUpgrade:hover:not(:disabled) {
+            background: #45a049;
+            transform: scale(1.02);
+        }
+
+        .btnUpgrade:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .npc {
+            position: absolute;
+            text-align: center;
+        }
+
+        .npcSprite {
+            width: 35px;
+            height: 45px;
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%);
+            border-radius: 8px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            border: 2px solid #333;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .npcLabel {
+            font-size: 10px;
+            color: #333;
+            margin-top: 3px;
+            white-space: nowrap;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-weight: bold;
+            border: 1px solid #333;
+        }
+
+        .addMineSection {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 380px;
+            flex-shrink: 0;
+        }
+
+        #addMineBtn {
+            padding: 20px 30px;
+            background: linear-gradient(135deg, #FF9800 0%, #FFB74D 100%);
+            color: white;
+            border: 3px solid #333;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        #addMineBtn:hover:not(:disabled) {
+            background: linear-gradient(135deg, #e68900 0%, #FF9800 100%);
+            transform: scale(1.08);
+            box-shadow: 0 7px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        #addMineBtn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            border-color: #999;
+        }
+
+        .ore-text {
+            font-weight: bold;
+            font-size: 14px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        }
+
+        .coal-ore {
+            color: #4a4a4a;
+        }
+
+        .gold-ore {
+            color: #FFD700;
+        }
+
+        .diamond-ore {
+            color: #00CED1;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) opacity(1);
+            }
+            100% {
+                transform: translateY(-60px) opacity(0);
+            }
+        }
+
+        .ore-particle {
+            position: absolute;
+            animation: floatUp 1.2s ease-out;
+            pointer-events: none;
+            font-family: Arial, sans-serif;
+        }
+
+        .progressBar {
+            width: 100%;
+            height: 8px;
+            background: #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+
+        .progressFill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50 0%, #45a049 100%);
+            transition: width 0.3s;
+        }
+
+        .costWarning {
+            color: #d32f2f;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .elevatorSprite {
+            width: 40px;
+            height: 50px;
+            background: linear-gradient(135deg, #FF6B6B 0%, #FFB6B6 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            border: 2px solid #333;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .managerSprite {
+            width: 40px;
+            height: 50px;
+            background: linear-gradient(135deg, #4CAF50 0%, #81C784 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            border: 2px solid #333;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .minerSprite {
+            width: 40px;
+            height: 50px;
+            background: linear-gradient(135deg, #2196F3 0%, #64B5F6 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            border: 2px solid #333;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <div id="topBar">
+            <div class="topBar-section">
+                <div class="stat">
+                    <span class="stat-label">💰 Money:</span>
+                    <span class="stat-value" id="totalMoney">$0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">⛏️ Coal:</span>
+                    <span class="stat-value" id="totalCoal">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">✨ Gold:</span>
+                    <span class="stat-value" id="totalGold">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">💎 Diamond:</span>
+                    <span class="stat-value" id="totalDiamond">0</span>
+                </div>
+            </div>
+            <div class="topBar-section">
+                <div class="stat">
+                    <span class="stat-label">🏭 Mines:</span>
+                    <span class="stat-value" id="mineCount">0</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="gameArea">
+            <div id="minesContainer">
+                <div class="addMineSection">
+                    <button id="addMineBtn">+ ADD MINE ($500)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
+        <div class="modalContent">
+            <div class="modalHeader">
+                <span id="settingsTitle">Mine Settings</span>
+                <button class="closeBtn" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="settingsContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // ============ GAME CONSTANTS ============
+        const MINE_COST = 500;
+        const BASE_MINE_DEPTH = 5;
+        const COAL_PRICE = 50;
+        const GOLD_PRICE = 200;
+        const DIAMOND_PRICE = 500;
+
+        // ============ GAME STATE ============
+        let gameState = {
+            money: 2000,
+            mines: [],
+            nextMineId: 1,
+        };
+
+        // ============ ORE CLASSES ============
+        class Ore {
+            constructor(type, depth) {
+                this.type = type;
+                this.depth = depth;
+                this.name = type.charAt(0).toUpperCase() + type.slice(1);
+            }
+
+            getPrice() {
+                switch(this.type) {
+                    case 'coal': return COAL_PRICE;
+                    case 'gold': return GOLD_PRICE;
+                    case 'diamond': return DIAMOND_PRICE;
+                    default: return 0;
+                }
+            }
+
+            getColor() {
+                switch(this.type) {
+                    case 'coal': return '#4a4a4a';
+                    case 'gold': return '#FFD700';
+                    case 'diamond': return '#00CED1';
+                    default: return '#999';
+                }
+            }
+
+            getEmoji() {
+                switch(this.type) {
+                    case 'coal': return '⛏️';
+                    case 'gold': return '✨';
+                    case 'diamond': return '💎';
+                    default: return '🪨';
+                }
+            }
+        }
+
+        // ============ MINE CLASS ============
+        class Mine {
+            constructor(id) {
+                this.id = id;
+                this.depth = BASE_MINE_DEPTH;
+                this.currentOres = [];
+                this.inventory = { coal: 0, gold: 0, diamond: 0 };
+                this.managers = [];
+                this.elevator = null;
+                this.canvas = null;
+                this.ctx = null;
+                this.npcs = [];
+                this.generateOres();
+                this.spawnInitialNPCs();
+            }
+
+            generateOres() {
+                const oreTypes = [];
+                
+                // Generate ores based on depth
+                for (let d = 1; d <= this.depth; d++) {
+                    if (d <= 5) {
+                        oreTypes.push('coal');
+                    } else if (d <= 15) {
+                        oreTypes.push('gold');
+                    } else {
+                        oreTypes.push('diamond');
+                    }
+                }
+
+                // Randomize
+                this.currentOres = oreTypes.map(type => new Ore(type, Math.random())).sort(() => Math.random() - 0.5);
+            }
+
+            spawnInitialNPCs() {
+                this.npcs = [];
+                // Spawn a default miner
+                this.npcs.push({
+                    id: Math.random(),
+                    type: 'miner',
+                    name: 'Miner 1',
+                    x: Math.random() * 200 + 50,
+                    y: Math.random() * 200 + 50,
+                    miningSpeed: 1
+                });
+            }
+
+            mineOre(amount = 1) {
+                let mined = [];
+                for (let i = 0; i < amount && this.currentOres.length > 0; i++) {
+                    const ore = this.currentOres.pop();
+                    this.inventory[ore.type]++;
+                    mined.push(ore);
+                }
+                return mined;
+            }
+
+            addManager() {
+                this.managers.push({
+                    id: Math.random(),
+                    type: 'manager',
+                    name: `Manager ${this.managers.length + 1}`,
+                    x: Math.random() * 200 + 50,
+                    y: Math.random() * 250 + 50,
+                    automationLevel: 1
+                });
+            }
+
+            upgradeElevator() {
+                if (!this.elevator) {
+                    this.elevator = {
+                        id: Math.random(),
+                        type: 'elevator',
+                        name: 'Elevator',
+                        capacity: 10,
+                        level: 1,
+                        x: 300,
+                        y: 50
+                    };
+                } else {
+                    this.elevator.capacity += 5;
+                    this.elevator.level++;
+                }
+            }
+
+            getTotalOres() {
+                return this.inventory.coal + this.inventory.gold + this.inventory.diamond;
+            }
+
+            sellAllOres() {
+                let earnings = 0;
+                earnings += this.inventory.coal * COAL_PRICE;
+                earnings += this.inventory.gold * GOLD_PRICE;
+                earnings += this.inventory.diamond * DIAMOND_PRICE;
+                
+                this.inventory = { coal: 0, gold: 0, diamond: 0 };
+                return earnings;
+            }
+
+            drawMineCanvas() {
+                if (!this.canvas || !this.ctx) return;
+
+                const width = this.canvas.width;
+                const height = this.canvas.height;
+
+                // Clear canvas
+                this.ctx.fillStyle = `#654321`;
+                this.ctx.fillRect(0, 0, width, height);
+
+                // Draw ore deposits
+                this.ctx.font = '20px Arial';
+                const displayOres = this.currentOres.slice(0, 8);
+                displayOres.forEach((ore, index) => {
+                    const x = (index % 4) * (width / 4) + 30;
+                    const y = Math.floor(index / 4) * (height / 2) + 50;
+                    
+                    this.ctx.fillStyle = ore.getColor();
+                    this.ctx.fillRect(x, y, 35, 35);
+                    this.ctx.strokeStyle = '#333';
+                    this.ctx.lineWidth = 2;
+                    this.ctx.strokeRect(x, y, 35, 35);
+                    
+                    this.ctx.fillStyle = '#fff';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.textBaseline = 'middle';
+                    this.ctx.fillText(ore.getEmoji(), x + 17, y + 17);
+                });
+
+                // Draw NPCs
+                this.npcs.forEach(npc => {
+                    this.drawNPC(npc);
+                });
+
+                this.managers.forEach(manager => {
+                    this.drawNPC(manager);
+                });
+
+                if (this.elevator) {
+                    this.drawNPC(this.elevator);
+                }
+
+                // Draw ores remaining count
+                this.ctx.fillStyle = '#FFD700';
+                this.ctx.font = 'bold 14px Arial';
+                this.ctx.textAlign = 'left';
+                this.ctx.textBaseline = 'top';
+                this.ctx.fillText(`Ores Available: ${this.currentOres.length}`, 10, 10);
+            }
+
+            drawNPC(npc) {
+                const x = npc.x;
+                const y = npc.y;
+                
+                if (npc.type === 'miner') {
+                    this.ctx.fillStyle = '#2196F3';
+                    this.ctx.fillRect(x, y, 25, 30);
+                    this.ctx.fillStyle = '#fff';
+                    this.ctx.font = 'bold 16px Arial';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.textBaseline = 'middle';
+                    this.ctx.fillText('⛏️', x + 12, y + 15);
+                } else if (npc.type === 'manager') {
+                    this.ctx.fillStyle = '#4CAF50';
+                    this.ctx.fillRect(x, y, 25, 30);
+                    this.ctx.fillStyle = '#fff';
+                    this.ctx.font = 'bold 16px Arial';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.textBaseline = 'middle';
+                    this.ctx.fillText('👔', x + 12, y + 15);
+                } else if (npc.type === 'elevator') {
+                    this.ctx.fillStyle = '#FF6B6B';
+                    this.ctx.fillRect(x, y, 30, 40);
+                    this.ctx.strokeStyle = '#333';
+                    this.ctx.lineWidth = 2;
+                    this.ctx.strokeRect(x, y, 30, 40);
+                    this.ctx.fillStyle = '#fff';
+                    this.ctx.font = 'bold 18px Arial';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.textBaseline = 'middle';
+                    this.ctx.fillText('🛗', x + 15, y + 20);
+                }
+            }
+
+            autoMine() {
+                if (this.managers.length > 0) {
+                    const mineAmount = this.managers.length;
+                    this.mineOre(mineAmount);
+                }
+            }
+        }
+
+        // ============ UI FUNCTIONS ============
+        function updateUI() {
+            let totalCoal = 0, totalGold = 0, totalDiamond = 0;
+            gameState.mines.forEach(mine => {
+                totalCoal += mine.inventory.coal;
+                totalGold += mine.inventory.gold;
+                totalDiamond += mine.inventory.diamond;
+            });
+
+            document.getElementById('totalMoney').textContent = '$' + gameState.money.toLocaleString();
+            document.getElementById('totalCoal').textContent = totalCoal;
+            document.getElementById('totalGold').textContent = totalGold;
+            document.getElementById('totalDiamond').textContent = totalDiamond;
+            document.getElementById('mineCount').textContent = gameState.mines.length;
+        }
+
+        function renderMines() {
+            const container = document.getElementById('minesContainer');
+            
+            // Keep the add mine button
+            const addMineSection = container.querySelector('.addMineSection');
+            container.innerHTML = '';
+            
+            // Render each mine
+            gameState.mines.forEach(mine => {
+                const mineSection = createMineSection(mine);
+                container.appendChild(mineSection);
+            });
+            
+            // Add the add mine button back
+            container.appendChild(addMineSection || createAddMineSection());
+        }
+
+        function createMineSection(mine) {
+            const section = document.createElement('div');
+            section.className = 'mineSection';
+            section.id = `mine-${mine.id}`;
+
+            const header = document.createElement('div');
+            header.className = 'mineHeader';
+            header.innerHTML = `
+                <div>
+                    <div class="mineTitle">Mine #${mine.id}</div>
+                    <div class="mineDepth">Depth: ${mine.depth}</div>
+                </div>
+                <button class="settingsBtn" onclick="openMineSettings(${mine.id})">⚙️</button>
+            `;
+            section.appendChild(header);
+
+            const canvas = document.createElement('canvas');
+            canvas.className = 'mineCanvas';
+            canvas.width = 340;
+            canvas.height = 350;
+            canvas.onclick = () => mineMiningClick(mine.id);
+            section.appendChild(canvas);
+
+            mine.canvas = canvas;
+            mine.ctx = canvas.getContext('2d');
+            mine.drawMineCanvas();
+
+            const info = document.createElement('div');
+            info.className = 'mineInfo';
+            info.innerHTML = `
+                <div class="infoBox">
+                    <div class="infoLabel">⛏️ Coal</div>
+                    <div class="infoValue">${mine.inventory.coal}</div>
+                </div>
+                <div class="infoBox">
+                    <div class="infoLabel">✨ Gold</div>
+                    <div class="infoValue">${mine.inventory.gold}</div>
+                </div>
+                <div class="infoBox">
+                    <div class="infoLabel">💎 Diamond</div>
+                    <div class="infoValue">${mine.inventory.diamond}</div>
+                </div>
+                <div class="infoBox">
+                    <div class="infoLabel">📦 Total</div>
+                    <div class="infoValue">${mine.getTotalOres()}</div>
+                </div>
+            `;
+            section.appendChild(info);
+
+            const buttons = document.createElement('div');
+            buttons.className = 'buttonGroup';
+            buttons.innerHTML = `
+                <button class="btnSmall" onclick="quickMineSingle(${mine.id})">⛏️ Mine (10)</button>
+                <button class="btnSmall" onclick="sellMineOres(${mine.id})">💰 Sell All</button>
+            `;
+            section.appendChild(buttons);
+
+            return section;
+        }
+
+        function createAddMineSection() {
+            const section = document.createElement('div');
+            section.className = 'addMineSection';
+            section.innerHTML = '<button id="addMineBtn" onclick="addMine()">+ ADD MINE ($500)</button>';
+            return section;
+        }
+
+        function addMine() {
+            if (gameState.money >= MINE_COST) {
+                gameState.money -= MINE_COST;
+                const newMine = new Mine(gameState.nextMineId++);
+                gameState.mines.push(newMine);
+                updateUI();
+                renderMines();
+            } else {
+                alert('Not enough money! You need $500');
+            }
+        }
+
+        function mineMiningClick(mineId) {
+            const mine = gameState.mines.find(m => m.id === mineId);
+            if (mine) {
+                const mined = mine.mineOre(1);
+                if (mined.length > 0) {
+                    const ore = mined[0];
+                    showOreParticle(ore, mineId);
+                }
+                mine.drawMineCanvas();
+                updateUI();
+            }
+        }
+
+        function quickMineSingle(mineId) {
+            const mine = gameState.mines.find(m => m.id === mineId);
+            if (mine) {
+                for (let i = 0; i < 10; i++) {
+                    const mined = mine.mineOre(1);
+                    if (mined.length > 0) {
+                        showOreParticle(mined[0], mineId);
+                    }
+                }
+                mine.drawMineCanvas();
+                updateUI();
+            }
+        }
+
+        function sellMineOres(mineId) {
+            const mine = gameState.mines.find(m => m.id === mineId);
+            if (mine) {
+                const earnings = mine.sellAllOres();
+                gameState.money += earnings;
+                
+                if (earnings > 0) {
+                    alert(`Sold all ores for $${earnings}!`);
+                }
+                
+                mine.drawMineCanvas();
+                updateUI();
+                renderMines();
+            }
+        }
+
+        function showOreParticle(ore, mineId) {
+            const mine = gameState.mines.find(m => m.id === mineId);
+            if (!mine || !mine.canvas) return;
+
+            const mineElement = document.getElementById(`mine-${mineId}`);
+            if (!mineElement) return;
+
+            const particle = document.createElement('div');
+            particle.className = 'ore-particle ore-text ' + ore.type + '-ore';
+            particle.textContent = ore.getEmoji() + ' +1';
+            particle.style.left = Math.random() * 300 + 50 + 'px';
+            particle.style.top = Math.random() * 300 + 50 + 'px';
+
+            mine.canvas.parentElement.appendChild(particle);
+
+            setTimeout(() => particle.remove(), 1200);
+        }
+
+        function openMineSettings(mineId) {
+            const mine = gameState.mines.find(m => m.id === mineId);
+            if (!mine) return;
+
+            const modal = document.getElementById('settingsModal');
+            const content = document.getElementById('settingsContent');
+            const title = document.getElementById('settingsTitle');
+
+            title.textContent = `⚙️ Mine #${mine.id} Settings`;
+            content.innerHTML = '';
+
+            // Miners Section
+            const minersSection = document.createElement('div');
+            minersSection.innerHTML = `
+                <h3 style="margin-top: 20px; margin-bottom: 10px; color: #333; border-bottom: 2px solid #2196F3; padding-bottom: 5px;">
+                    ⛏️ Miners (${mine.npcs.length})
+                </h3>
+            `;
+            mine.npcs.forEach(miner => {
+                minersSection.innerHTML += `
+                    <div class="upgradeItem">
+                        <div class="upgradeTitle">${miner.name}</div>
+                        <div class="upgradeDesc">Speed: ${miner.miningSpeed.toFixed(1)} ore/s</div>
+                        <div style="color: #2196F3; font-size: 12px; font-weight: bold;">Status: Active</div>
+                    </div>
+                `;
+            });
+            content.appendChild(minersSection);
+
+            // Managers Section
+            const managersSection = document.createElement('div');
+            managersSection.innerHTML = `
+                <h3 style="margin-top: 20px; margin-bottom: 10px; color: #333; border-bottom: 2px solid #4CAF50; padding-bottom: 5px;">
+                    👔 Managers (${mine.managers.length})
+                </h3>
+            `;
+            mine.managers.forEach(manager => {
+                managersSection.innerHTML += `
+                    <div class="upgradeItem">
+                        <div class="upgradeTitle">${manager.name}</div>
+                        <div class="upgradeDesc">Automation Level: ${manager.automationLevel}</div>
+                        <div style="color: #4CAF50; font-size: 12px; font-weight: bold;">Status: Auto Mining</div>
+                    </div>
+                `;
+            });
+
+            const hireManagerBtn = document.createElement('button');
+            hireManagerBtn.className = 'btnUpgrade';
+            hireManagerBtn.textContent = 'Hire Manager ($300)';
+            hireManagerBtn.disabled = gameState.money < 300;
+            hireManagerBtn.onclick = () => {
+                if (gameState.money >= 300) {
+                    gameState.money -= 300;
+                    mine.addManager();
+                    updateUI();
+                    openMineSettings(mineId);
+                } else {
+                    alert('Not enough money!');
+                }
+            };
+            managersSection.appendChild(hireManagerBtn);
+            content.appendChild(managersSection);
+
+            // Elevator Section
+            const elevatorSection = document.createElement('div');
+            elevatorSection.innerHTML = `
+                <h3 style="margin-top: 20px; margin-bottom: 10px; color: #333; border-bottom: 2px solid #FF6B6B; padding-bottom: 5px;">
+                    🛗 Elevator
+                </h3>
+            `;
+
+            if (mine.elevator) {
+                elevatorSection.innerHTML += `
+                    <div class="upgradeItem">
+                        <div class="upgradeTitle">${mine.elevator.name}</div>
+                        <div class="upgradeDesc">Level: ${mine.elevator.level}</div>
+                        <div class="upgradeCost">Capacity: ${mine.elevator.capacity} ores</div>
+                    </div>
+                `;
+            } else {
+                elevatorSection.innerHTML += `
+                    <div class="upgradeItem">
+                        <div class="upgradeDesc">No elevator installed</div>
+                    </div>
+                `;
+            }
+
+            const elevatorUpgradeBtn = document.createElement('button');
+            elevatorUpgradeBtn.className = 'btnUpgrade';
+            elevatorUpgradeBtn.textContent = mine.elevator ? 'Upgrade Elevator ($400)' : 'Build Elevator ($400)';
+            elevatorUpgradeBtn.disabled = gameState.money < 400;
+            elevatorUpgradeBtn.onclick = () => {
+                if (gameState.money >= 400) {
+                    gameState.money -= 400;
+                    mine.upgradeElevator();
+                    updateUI();
+                    openMineSettings(mineId);
+                } else {
+                    alert('Not enough money!');
+                }
+            };
+            elevatorSection.appendChild(elevatorUpgradeBtn);
+            content.appendChild(elevatorSection);
+
+            // Depth Upgrade Section
+            const depthSection = document.createElement('div');
+            depthSection.innerHTML = `
+                <h3 style="margin-top: 20px; margin-bottom: 10px; color: #333; border-bottom: 2px solid #FFD700; padding-bottom: 5px;">
+                    🔨 Mine Depth
+                </h3>
+                <div class="upgradeItem">
+                    <div class="upgradeTitle">Current Depth: ${mine.depth}</div>
+                    <div class="upgradeDesc">Dive deeper to find better ores!</div>
+                    <div class="upgradeCost">Cost: $600</div>
+                </div>
+            `;
+
+            const depthUpgradeBtn = document.createElement('button');
+            depthUpgradeBtn.className = 'btnUpgrade';
+            depthUpgradeBtn.textContent = 'Dig Deeper ($600)';
+            depthUpgradeBtn.disabled = gameState.money < 600;
+            depthUpgradeBtn.onclick = () => {
+                if (gameState.money >= 600) {
+                    gameState.money -= 600;
+                    mine.depth += 5;
+                    mine.generateOres();
+                    mine.drawMineCanvas();
+                    updateUI();
+                    openMineSettings(mineId);
+                } else {
+                    alert('Not enough money!');
+                }
+            };
+            depthSection.appendChild(depthUpgradeBtn);
+            content.appendChild(depthSection);
+
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('settingsModal').classList.remove('active');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('settingsModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // ============ AUTO-MINING LOOP ============
+        setInterval(() => {
+            gameState.mines.forEach(mine => {
+                mine.autoMine();
+            });
+            updateUI();
+            renderMines();
+        }, 2000);
+
+        // ============ INITIAL SETUP ============
+        updateUI();
+        renderMines();
+
+        // Add initial mine button listener
+        document.addEventListener('DOMContentLoaded', () => {
+            const addBtn = document.getElementById('addMineBtn');
+            if (addBtn) {
+                addBtn.onclick = addMine;
+            }
+        });
+    </script>
+</body>
+</html>
