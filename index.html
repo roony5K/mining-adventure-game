@@ -14,7 +14,7 @@
         body {
             font-family: 'Arial', sans-serif;
             overflow: hidden;
-            background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 50%, #90EE90 100%);
+            background: linear-gradient(180deg, #87CEEB 0%, #E0F6FF 30%, #90EE90 60%, #8B7355 100%);
         }
 
         #gameContainer {
@@ -62,75 +62,118 @@
             position: relative;
             overflow: hidden;
             display: flex;
-            align-items: center;
-            justify-content: center;
+            align-items: flex-end;
+            justify-content: flex-start;
+            background: linear-gradient(180deg, #87CEEB 0%, #E0F6FF 30%, #90EE90 60%, #A0826D 100%);
+            padding-bottom: 20px;
+            padding-left: 20px;
         }
 
         #minesContainer {
-            flex: 1;
             display: flex;
-            gap: 40px;
-            padding: 20px;
+            gap: 50px;
+            align-items: flex-end;
             overflow-x: auto;
-            align-items: center;
-            justify-content: flex-start;
-            background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 50%, #90EE90 100%);
+            padding-bottom: 0;
         }
 
         .mineShaft {
             flex-shrink: 0;
-            width: 160px;
-            height: 600px;
             position: relative;
             display: flex;
             flex-direction: column;
+            align-items: center;
         }
 
-        /* Mine Shaft Structure */
-        .shaftContainer {
-            width: 100%;
-            height: 100%;
-            border: 4px solid #4a3728;
-            border-radius: 20px 20px 0 0;
-            background: linear-gradient(to bottom, #8B7355 0%, #654321 50%, #3E2723 100%);
+        /* Ground/Surface Level */
+        .groundLevel {
+            width: 180px;
+            height: 80px;
+            background: linear-gradient(180deg, #90EE90 0%, #7CB342 50%, #8B7355 100%);
+            border-radius: 50% 50% 0 0;
             position: relative;
+            margin-bottom: -10px;
+            z-index: 5;
+            border: 3px solid #654321;
+            box-shadow: inset 0 5px 10px rgba(0, 0, 0, 0.3), 0 5px 15px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .groundLevel::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 8px;
+            background: repeating-linear-gradient(90deg, #6B8E23 0px, #6B8E23 20px, #7CB342 20px, #7CB342 40px);
+            top: 0;
+            border-radius: 50% 50% 0 0;
+        }
+
+        .groundLevel::after {
+            content: '';
+            position: absolute;
+            width: 90%;
+            height: 40px;
+            background: repeating-linear-gradient(90deg, #9ACD32 0px, #9ACD32 15px, #ADFF2F 15px, #ADFF2F 30px);
+            top: 20px;
+            filter: blur(2px);
+        }
+
+        .groundRocks {
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            height: 20px;
+            background: repeating-linear-gradient(90deg, #8B7355 0px, #8B7355 20px, #A0826D 20px, #A0826D 40px);
+            border-bottom: 3px solid #654321;
+        }
+
+        .groundRocks::before,
+        .groundRocks::after {
+            content: '';
+            position: absolute;
+            background: radial-gradient(circle, #9E8B7E 0%, #7D6F64 100%);
+            border-radius: 50%;
+        }
+
+        .groundRocks::before {
+            width: 25px;
+            height: 15px;
+            left: 20%;
+            top: -8px;
+            border: 2px solid #5C5349;
+        }
+
+        .groundRocks::after {
+            width: 20px;
+            height: 12px;
+            right: 15%;
+            top: -5px;
+            border: 2px solid #5C5349;
+        }
+
+        /* Elevator Shaft */
+        .shaftContainer {
+            width: 180px;
+            height: 420px;
+            background: linear-gradient(90deg, #6F5F52 0%, #5C5349 50%, #4A4440 100%);
+            border: 4px solid #3E3935;
+            border-top: none;
+            position: relative;
+            box-shadow: inset -5px 0 20px rgba(0, 0, 0, 0.5), inset 5px 0 20px rgba(0, 0, 0, 0.3);
             overflow: hidden;
-            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5), 0 10px 30px rgba(0, 0, 0, 0.3);
         }
 
         .shaftWalls {
             position: absolute;
             width: 100%;
             height: 100%;
-            top: 0;
-            left: 0;
+            background: repeating-linear-gradient(90deg, transparent 0px, transparent 20px, rgba(0, 0, 0, 0.1) 20px, rgba(0, 0, 0, 0.1) 22px);
             pointer-events: none;
-        }
-
-        .shaftWall {
-            position: absolute;
-            background: repeating-linear-gradient(
-                90deg,
-                #5a4a3a 0px,
-                #5a4a3a 2px,
-                #6a5a4a 2px,
-                #6a5a4a 4px
-            );
-            opacity: 0.3;
-        }
-
-        .wallLeft {
-            left: 0;
-            top: 0;
-            width: 8px;
-            height: 100%;
-        }
-
-        .wallRight {
-            right: 0;
-            top: 0;
-            width: 8px;
-            height: 100%;
         }
 
         .shaftContent {
@@ -141,194 +184,204 @@
             flex-direction: column;
         }
 
-        .depthMarkers {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            left: 0;
-            top: 0;
-            pointer-events: none;
-        }
-
-        .depthMarker {
-            position: absolute;
-            left: 5px;
-            width: 100%;
-            height: 1px;
-            background: rgba(255, 255, 255, 0.2);
-            font-size: 10px;
-            color: rgba(255, 255, 255, 0.4);
-            padding-left: 3px;
-        }
-
-        .oreLayer {
+        .depthLevel {
             flex: 1;
             position: relative;
+            border-bottom: 2px dashed rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 10px 5px;
+        }
+
+        .depthLevel:last-child {
+            border-bottom: none;
+        }
+
+        .oreDeposit {
+            width: 35px;
+            height: 35px;
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 24px;
             cursor: pointer;
-            transition: all 0.2s;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-        }
-
-        .oreLayer:hover {
-            background: rgba(0, 0, 0, 0.1);
-        }
-
-        .oreMine {
-            width: 50px;
-            height: 50px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            border: 3px solid rgba(0, 0, 0, 0.3);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-            cursor: pointer;
+            border: 2px solid rgba(0, 0, 0, 0.4);
             transition: all 0.1s;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
         }
 
-        .oreMine:active {
+        .oreDeposit:hover {
+            transform: scale(1.1);
+            box-shadow: 0 3px 8px rgba(255, 255, 255, 0.3);
+        }
+
+        .oreDeposit:active {
             transform: scale(0.95);
         }
 
-        .coal {
-            background: linear-gradient(135deg, #3a3a3a 0%, #5a5a5a 100%);
+        .coalOre {
+            background: linear-gradient(135deg, #2a2a2a 0%, #4a4a4a 100%);
         }
 
-        .gold {
+        .goldOre {
             background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
         }
 
-        .diamond {
+        .diamondOre {
             background: linear-gradient(135deg, #00CED1 0%, #00BFFF 100%);
         }
 
-        .elevatorShaft {
+        /* NPCs in Shaft */
+        .npcContainer {
             position: absolute;
-            right: 0;
-            top: 0;
-            width: 100px;
+            width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.1) 100%);
-            border-left: 2px dashed #666;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            pointer-events: none;
+            top: 0;
+            left: 0;
         }
 
+        .npc {
+            position: absolute;
+            text-align: center;
+            z-index: 20;
+        }
+
+        .npcSprite {
+            width: 40px;
+            height: 50px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            border: 2px solid #333;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .minerSprite {
+            background: linear-gradient(135deg, #2196F3 0%, #64B5F6 100%);
+        }
+
+        .managerSprite {
+            background: linear-gradient(135deg, #4CAF50 0%, #81C784 100%);
+        }
+
+        .npcLabel {
+            font-size: 9px;
+            color: #333;
+            margin-top: 2px;
+            white-space: nowrap;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1px 3px;
+            border-radius: 2px;
+            font-weight: bold;
+            border: 1px solid #333;
+        }
+
+        /* Elevator Car */
         .elevatorCar {
-            width: 70px;
-            height: 60px;
+            position: absolute;
+            width: 150px;
+            height: 55px;
             background: linear-gradient(135deg, #FF6B6B 0%, #FFB6B6 100%);
             border: 3px solid #333;
             border-radius: 8px;
-            position: absolute;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 28px;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
             transition: all 0.3s;
-            top: 10px;
+            left: 15px;
+            z-index: 15;
         }
 
         .elevatorCar:hover {
             transform: scale(1.05);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
         }
 
-        .mineHeader {
+        .elevatorCar:active {
+            transform: scale(0.98);
+        }
+
+        /* Elevator Door */
+        .elevatorDoor {
             position: absolute;
-            top: -50px;
-            left: 0;
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 100;
+            width: 80%;
+            height: 6px;
+            background: repeating-linear-gradient(90deg, #FFD700 0px, #FFD700 4px, #FFA500 4px, #FFA500 8px);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 3px;
+            border: 1px solid #333;
         }
 
-        .mineTitle {
-            font-size: 16px;
-            font-weight: bold;
-            color: #333;
-            background: white;
-            padding: 5px 10px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        .elevatorDoor::before,
+        .elevatorDoor::after {
+            content: '';
+            position: absolute;
+            width: 30%;
+            height: 100%;
+            background: inherit;
+            top: 0;
         }
 
-        .settingsBtn {
-            width: 32px;
-            height: 32px;
-            background: #2196F3;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.3s;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        }
-
-        .settingsBtn:hover {
-            background: #0b7dda;
-            transform: scale(1.1);
-        }
-
+        /* Info Section Below Shaft */
         .mineInfo {
             position: absolute;
-            bottom: -120px;
+            bottom: -100px;
             left: 0;
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 8px;
+            gap: 6px;
             width: 100%;
         }
 
         .infoBox {
-            padding: 8px;
+            padding: 6px;
             background: white;
-            border-radius: 5px;
+            border-radius: 4px;
             border-left: 3px solid #FFD700;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            text-align: center;
         }
 
         .infoLabel {
             color: #666;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: bold;
         }
 
         .infoValue {
             color: #333;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: bold;
         }
 
+        /* Button Group */
         .buttonGroup {
             position: absolute;
-            bottom: -160px;
+            bottom: -140px;
             left: 0;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 4px;
             width: 100%;
         }
 
         .btnSmall {
             width: 100%;
-            padding: 8px;
+            padding: 6px;
             background: #4CAF50;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 4px;
             cursor: pointer;
             font-size: 11px;
             font-weight: bold;
@@ -350,17 +403,55 @@
             cursor: not-allowed;
         }
 
-        .addMineSection {
+        /* Settings Button */
+        .settingsBtn {
+            position: absolute;
+            top: -40px;
+            right: -10px;
+            width: 32px;
+            height: 32px;
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            min-width: 180px;
+            transition: 0.3s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .settingsBtn:hover {
+            background: #0b7dda;
+            transform: scale(1.1);
+        }
+
+        .mineTitle {
+            position: absolute;
+            top: -38px;
+            left: 0;
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+            background: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .addMineSection {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            min-width: 200px;
             flex-shrink: 0;
-            height: 600px;
+            height: 500px;
         }
 
         #addMineBtn {
-            padding: 25px 15px;
+            padding: 20px 15px;
             background: linear-gradient(135deg, #FF9800 0%, #FFB74D 100%);
             color: white;
             border: 3px solid #333;
@@ -371,7 +462,7 @@
             transition: 0.3s;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
             text-align: center;
-            line-height: 1.4;
+            line-height: 1.3;
         }
 
         #addMineBtn:hover:not(:disabled) {
@@ -386,7 +477,7 @@
             border-color: #999;
         }
 
-        /* Modal Styles */
+        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -473,13 +564,6 @@
             margin-bottom: 8px;
         }
 
-        .upgradeLevel {
-            font-size: 12px;
-            color: #2196F3;
-            font-weight: bold;
-            margin-bottom: 8px;
-        }
-
         .btnUpgrade {
             width: 100%;
             padding: 10px;
@@ -500,38 +584,6 @@
         .btnUpgrade:disabled {
             background: #cccccc;
             cursor: not-allowed;
-        }
-
-        .npc {
-            position: absolute;
-            text-align: center;
-            z-index: 10;
-        }
-
-        .npcSprite {
-            width: 35px;
-            height: 45px;
-            background: linear-gradient(135deg, #4CAF50 0%, #81C784 100%);
-            border-radius: 8px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            border: 2px solid #333;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
-        }
-
-        .npcLabel {
-            font-size: 10px;
-            color: #333;
-            margin-top: 3px;
-            white-space: nowrap;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 2px 5px;
-            border-radius: 3px;
-            font-weight: bold;
-            border: 1px solid #333;
         }
 
         @keyframes floatUp {
@@ -613,7 +665,7 @@
     </div>
 
     <script>
-        // ============ GAME CONSTANTS ============
+        // ============ CONSTANTS ============
         const MINE_COST = 500;
         const BASE_MINE_DEPTH = 5;
         const COAL_PRICE = 50;
@@ -622,6 +674,7 @@
         const MANAGER_COST = 300;
         const ELEVATOR_COST = 400;
         const DEPTH_UPGRADE_COST = 600;
+        const LEVELS_PER_DEPTH = 4;
 
         // ============ GAME STATE ============
         let gameState = {
@@ -630,7 +683,7 @@
             nextMineId: 1,
         };
 
-        // ============ ORE CLASSES ============
+        // ============ ORE CLASS ============
         class Ore {
             constructor(type) {
                 this.type = type;
@@ -663,6 +716,10 @@
                     default: return '🪨';
                 }
             }
+
+            getCSSClass() {
+                return this.type + 'Ore';
+            }
         }
 
         // ============ MINE CLASS ============
@@ -676,6 +733,7 @@
                 this.elevator = null;
                 this.element = null;
                 this.shaftContent = null;
+                this.npcContainer = null;
                 this.npcs = [];
                 this.generateOres();
                 this.spawnInitialNPCs();
@@ -684,7 +742,6 @@
             generateOres() {
                 const oreTypes = [];
                 
-                // Generate ores based on depth
                 for (let d = 1; d <= this.depth; d++) {
                     if (d <= 5) {
                         oreTypes.push('coal');
@@ -695,18 +752,17 @@
                     }
                 }
 
-                // Randomize
                 this.currentOres = oreTypes.map(type => new Ore(type)).sort(() => Math.random() - 0.5);
             }
 
             spawnInitialNPCs() {
                 this.npcs = [];
-                // Spawn a default miner
                 this.npcs.push({
                     id: Math.random(),
                     type: 'miner',
                     name: 'Miner 1',
-                    miningSpeed: 1
+                    miningSpeed: 1,
+                    depth: 2
                 });
             }
 
@@ -725,7 +781,8 @@
                     id: Math.random(),
                     type: 'manager',
                     name: `Manager ${this.managers.length + 1}`,
-                    automationLevel: 1
+                    automationLevel: 1,
+                    depth: Math.floor(Math.random() * (this.depth * LEVELS_PER_DEPTH - 2)) + 2
                 });
             }
 
@@ -768,25 +825,76 @@
             render() {
                 if (!this.element || !this.shaftContent) return;
 
-                // Clear old ores
-                this.shaftContent.querySelectorAll('.oreLayer').forEach(el => el.remove());
+                // Clear old ore deposits
+                this.shaftContent.querySelectorAll('.depthLevel').forEach(el => el.remove());
 
-                // Render ore layers
-                this.currentOres.forEach((ore, index) => {
-                    const layer = document.createElement('div');
-                    layer.className = 'oreLayer';
-                    
-                    const oreElement = document.createElement('div');
-                    oreElement.className = `oreMine ${ore.type}`;
-                    oreElement.textContent = ore.getEmoji();
-                    oreElement.onclick = (e) => {
-                        e.stopPropagation();
-                        mineMiningClick(this.id);
-                    };
-                    
-                    layer.appendChild(oreElement);
-                    this.shaftContent.appendChild(layer);
+                // Calculate levels per depth
+                const totalLevels = this.depth * LEVELS_PER_DEPTH;
+                const oresPerLevel = Math.ceil(this.currentOres.length / totalLevels);
+
+                // Render depth levels with ores
+                for (let level = 0; level < totalLevels; level++) {
+                    const depthLevel = document.createElement('div');
+                    depthLevel.className = 'depthLevel';
+
+                    // Add ores to this level
+                    for (let o = 0; o < oresPerLevel; o++) {
+                        const oreIndex = level * oresPerLevel + o;
+                        if (oreIndex < this.currentOres.length) {
+                            const ore = this.currentOres[oreIndex];
+                            const oreEl = document.createElement('div');
+                            oreEl.className = `oreDeposit ${ore.getCSSClass()}`;
+                            oreEl.textContent = ore.getEmoji();
+                            oreEl.onclick = (e) => {
+                                e.stopPropagation();
+                                mineMiningClick(this.id);
+                            };
+                            depthLevel.appendChild(oreEl);
+                        }
+                    }
+
+                    this.shaftContent.appendChild(depthLevel);
+                }
+
+                // Render NPCs
+                this.renderNPCs();
+            }
+
+            renderNPCs() {
+                if (!this.npcContainer) return;
+                
+                this.npcContainer.innerHTML = '';
+
+                // Render miners
+                this.npcs.forEach((npc, idx) => {
+                    this.renderNPC(npc, idx);
                 });
+
+                // Render managers
+                this.managers.forEach((manager, idx) => {
+                    this.renderNPC(manager, idx + this.npcs.length);
+                });
+            }
+
+            renderNPC(npc, index) {
+                if (!this.npcContainer) return;
+
+                const npcEl = document.createElement('div');
+                npcEl.className = 'npc';
+                npcEl.style.left = (20 + (index % 2) * 70) + 'px';
+                npcEl.style.top = Math.min(npc.depth * 50, this.shaftContent.offsetHeight - 60) + 'px';
+
+                const sprite = document.createElement('div');
+                sprite.className = `npcSprite ${npc.type === 'miner' ? 'minerSprite' : 'managerSprite'}`;
+                sprite.textContent = npc.type === 'miner' ? '⛏️' : '👔';
+
+                const label = document.createElement('div');
+                label.className = 'npcLabel';
+                label.textContent = npc.name;
+
+                npcEl.appendChild(sprite);
+                npcEl.appendChild(label);
+                this.npcContainer.appendChild(npcEl);
             }
         }
 
@@ -809,13 +917,9 @@
         function renderMines() {
             const container = document.getElementById('minesContainer');
             
-            // Keep the add mine button at start
             const addMineSection = container.querySelector('.addMineSection');
-            
-            // Remove all mine shafts but keep add button
             container.querySelectorAll('.mineShaft').forEach(el => el.remove());
             
-            // Render each mine
             gameState.mines.forEach(mine => {
                 const mineSection = createMineSection(mine);
                 container.insertBefore(mineSection, addMineSection);
@@ -827,48 +931,59 @@
             const shaft = document.createElement('div');
             shaft.className = 'mineShaft';
             shaft.id = `mine-${mine.id}`;
-            shaft.style.marginTop = '60px';
-            shaft.style.marginBottom = '180px';
 
-            // Header
-            const header = document.createElement('div');
-            header.className = 'mineHeader';
-            header.innerHTML = `
-                <div class="mineTitle">Mine #${mine.id}</div>
-                <button class="settingsBtn" onclick="openMineSettings(${mine.id})">⚙️</button>
+            const title = document.createElement('div');
+            title.className = 'mineTitle';
+            title.textContent = `Mine #${mine.id}`;
+            shaft.appendChild(title);
+
+            const settingsBtn = document.createElement('button');
+            settingsBtn.className = 'settingsBtn';
+            settingsBtn.textContent = '⚙️';
+            settingsBtn.onclick = () => openMineSettings(mine.id);
+            shaft.appendChild(settingsBtn);
+
+            // Ground Level
+            const groundLevel = document.createElement('div');
+            groundLevel.className = 'groundLevel';
+            groundLevel.innerHTML = `
+                <div class="groundRocks"></div>
             `;
-            shaft.appendChild(header);
+            shaft.appendChild(groundLevel);
 
-            // Shaft container
+            // Shaft Container
             const shaftContainer = document.createElement('div');
             shaftContainer.className = 'shaftContainer';
 
             const shaftWalls = document.createElement('div');
             shaftWalls.className = 'shaftWalls';
-            shaftWalls.innerHTML = '<div class="shaftWall wallLeft"></div><div class="shaftWall wallRight"></div>';
             shaftContainer.appendChild(shaftWalls);
 
             const shaftContent = document.createElement('div');
             shaftContent.className = 'shaftContent';
             shaftContainer.appendChild(shaftContent);
 
-            // Elevator shaft on the right
-            const elevatorShaft = document.createElement('div');
-            elevatorShaft.className = 'elevatorShaft';
-            
+            // Elevator Car
             if (mine.elevator) {
                 const elevatorCar = document.createElement('div');
                 elevatorCar.className = 'elevatorCar';
-                elevatorCar.textContent = '🛗';
+                elevatorCar.innerHTML = `
+                    🛗
+                    <div class="elevatorDoor"></div>
+                `;
                 elevatorCar.onclick = (e) => {
                     e.stopPropagation();
                     sellMineOres(mine.id);
                 };
-                elevatorCar.title = 'Click to sell ores via elevator';
-                elevatorShaft.appendChild(elevatorCar);
+                elevatorCar.title = 'Click to sell ores';
+                shaftContainer.appendChild(elevatorCar);
             }
 
-            shaftContainer.appendChild(elevatorShaft);
+            // NPC Container
+            const npcContainer = document.createElement('div');
+            npcContainer.className = 'npcContainer';
+            shaftContainer.appendChild(npcContainer);
+
             shaft.appendChild(shaftContainer);
 
             // Info boxes
@@ -905,6 +1020,7 @@
 
             mine.element = shaft;
             mine.shaftContent = shaftContent;
+            mine.npcContainer = npcContainer;
 
             return shaft;
         }
@@ -926,8 +1042,7 @@
             if (mine) {
                 const mined = mine.mineOre(1);
                 if (mined.length > 0) {
-                    const ore = mined[0];
-                    showOreParticle(ore, mineId);
+                    showOreParticle(mined[0], mineId);
                 }
                 mine.render();
                 updateUI();
@@ -975,8 +1090,8 @@
             const particle = document.createElement('div');
             particle.className = 'ore-particle';
             particle.textContent = ore.getEmoji() + ' +1';
-            particle.style.left = Math.random() * 100 + 30 + 'px';
-            particle.style.top = Math.random() * 300 + 50 + 'px';
+            particle.style.left = Math.random() * 120 + 30 + 'px';
+            particle.style.top = Math.random() * 300 + 100 + 'px';
             particle.style.color = ore.getColor();
 
             mineElement.appendChild(particle);
@@ -1032,6 +1147,7 @@
                     mine.addManager();
                     updateUI();
                     openMineSettings(mineId);
+                    renderMines();
                 } else {
                     alert('Not enough money!');
                 }
@@ -1113,7 +1229,6 @@
             document.getElementById('settingsModal').classList.remove('active');
         }
 
-        // Close modal when clicking outside
         document.getElementById('settingsModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closeModal();
